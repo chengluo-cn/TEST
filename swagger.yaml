@@ -1,0 +1,1120 @@
+---
+swagger: "2.0"
+info:
+  description: "PO Scoring Management"
+  version: "1.0.0"
+  title: "PO Scoring Management"
+basePath: "/v1"
+tags:
+- name: "scoringrule"
+  description: "Manage the scoring defintions(including WML and CoS settings)"
+- name: "scoringjob"
+  description: "Manage the scoring job,define the scoring job based on the defintion"
+- name: "jobscheduler"
+  description: "Scoring job scheduler management, e.g. run/pause/resume/delete the\
+    \ jobs etc"
+- name: "joblog"
+  description: "Scoring job log management, which allows to retrive the scoring job\
+    \ logs"
+- name: "scoring"
+  description: "Retrieve information about the scoring data, scoring result"
+- name: "healthcheck"
+  description: "Service health check, it will check the container health as well as\
+    \ the connection to the scoring scheduler"
+schemes:
+- "https"
+- "http"
+parameters:
+  apiKeyHeader:
+    name: apiKey
+    in: header
+    type: string
+    required: true
+    description: "PO API KEY"
+  userIdHeader:
+    name: userId
+    in: header
+    type: string
+    required: true
+    description: "PO User ID"
+  tenantIdHeader:
+    name: tenantId
+    in: header
+    type: string
+    required: true
+    description: "PO tenant ID"
+x-globalParameters: &SECURITY_PARAMS
+  - $ref: '#/parameters/apiKeyHeader'
+  - $ref: '#/parameters/userIdHeader'
+paths:
+  /scoringrule:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoringrule"
+      summary: "Get all existing scoring rule for the tenant"
+      description: ""
+      operationId: "get_rules"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "skip"
+        in: "query"
+        description: "Skip n records while query"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Limit n records while return"
+        required: false
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring rule not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringrule_controller"
+  /scoringrule/{name}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoringrule"
+      summary: "Get an existing scoring rule"
+      description: ""
+      operationId: "get_rule"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring rule not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringrule_controller"
+    post:
+      tags:
+      - "scoringrule"
+      summary: "Define a new scoring rule"
+      description: ""
+      operationId: "create_rule"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scoring rule object that needs to be defined"
+        required: true
+        schema:
+          $ref: "#/definitions/ScoringRule"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.scoringrule_controller"
+    put:
+      tags:
+      - "scoringrule"
+      summary: "Update an existing scoring rule"
+      description: ""
+      operationId: "update_rule"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scoring rule object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/ScoringRule"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring rule not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringrule_controller"
+    delete:
+      tags:
+      - "scoringrule"
+      summary: "Deletes a scoring rule"
+      description: ""
+      operationId: "delete_rule"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Scoring rule not found"
+      x-swagger-router-controller: "swagger_server.controllers.scoringrule_controller"
+      
+ 
+ /model:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "diagmodel"
+      summary: "Get all existing diag model for the tenant"
+      description: ""
+      operationId: "get_models"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "skip"
+        in: "query"
+        description: "Skip n records while query"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Limit n records while return"
+        required: false
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring rule not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.diagmodel_controller"
+  /model/{name}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "diagmodel"
+      summary: "Get an existing diag model"
+      description: ""
+      operationId: "get_model"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Model definition name"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring rule not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.diagmodel_controller"
+    post:
+      tags:
+      - "diagmodel"
+      summary: "Define a new diag model"
+      description: ""
+      operationId: "create_model"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Model definition name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "diag model object that needs to be defined"
+        required: true
+        schema:
+          $ref: "#/definitions/DiagModel"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.diagmodel_controller"
+    put:
+      tags:
+      - "diagmodel"
+      summary: "Update an existing diag model"
+      description: ""
+      operationId: "update_model"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Model definition name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "diag model object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/DiagModel"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Diag model not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.diagmodel_controller"
+    delete:
+      tags:
+      - "diagmodel"
+      summary: "Deletes a diag model"
+      description: ""
+      operationId: "delete_model"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Model definition name"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Diag model not found"
+      x-swagger-router-controller: "swagger_server.controllers.diagmodel_controller"
+ 
+      
+      
+  /scoringjobs:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoringjob"
+      summary: "Get existing scoring job under the specific tenant"
+      description: ""
+      operationId: "get_jobs"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "skip"
+        in: "query"
+        description: "Skip n records while query"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Limit n records while return"
+        required: false
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringjob_controller"
+  /scoringjob/{name}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoringjob"
+      summary: "Get an existing scoring job"
+      description: ""
+      operationId: "get_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringjob_controller"
+    post:
+      tags:
+      - "scoringjob"
+      summary: "Define a new scoring job"
+      description: ""
+      operationId: "create_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scoring rule object that needs to be defined"
+        required: true
+        schema:
+          $ref: "#/definitions/ScoringJob"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.scoringjob_controller"
+    put:
+      tags:
+      - "scoringjob"
+      summary: "Update an existing scoring job"
+      description: ""
+      operationId: "update_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scoring job object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/job"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoringjob_controller"
+    delete:
+      tags:
+      - "scoringjob"
+      summary: "Deletes a scoring job"
+      description: ""
+      operationId: "delete_job"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        403:
+          description: "Scoring job access denied"
+        404:
+          description: "Scoring job not found"
+      x-swagger-router-controller: "swagger_server.controllers.scoringjob_controller"
+  /jobscheduler/{scheduler_name}/register:
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Register the job scheduler (this API will not expose to external)"
+      description: ""
+      operationId: "register_scheduler"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "scheduler_name"
+        in: "path"
+        description: "Scheduler name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scheduler meta data"
+        required: true
+        schema:
+          $ref: "#/definitions/Object"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{scheduler_name}/active:
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Set the job scheduler to active(this API will not expose to external)"
+      description: ""
+      operationId: "active_scheduler"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "scheduler_name"
+        in: "path"
+        description: "Scheduler name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scheduler meta data"
+        required: true
+        schema:
+          $ref: "#/definitions/Object"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{scheduler_name}/deactive:
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Set the job scheduler to deactive (this API will not expose to external)"
+      description: ""
+      operationId: "deactive_scheduler"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "scheduler_name"
+        in: "path"
+        description: "Scheduler name"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Scheduler meta data"
+        required: true
+        schema:
+          $ref: "#/definitions/Object"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{name}/pause:
+    parameters: *SECURITY_PARAMS
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Pause the specific scoring job"
+      description: ""
+      operationId: "pause_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{name}/resume:
+    parameters: *SECURITY_PARAMS
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Resume the specific scoring job"
+      description: ""
+      operationId: "resume_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{name}/run:
+    parameters: *SECURITY_PARAMS
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Run the specific scoring job"
+      description: ""
+      operationId: "run_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "jobscheduler"
+      summary: "Get all existing scoring job status of the specific tenant from job\
+        \ scheduler"
+      description: ""
+      operationId: "get_scheduler_jobs"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /jobscheduler/{name}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "jobscheduler"
+      summary: "Get the specific scoring job status from job scheduler"
+      description: ""
+      operationId: "get_scheduler_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+    post:
+      tags:
+      - "jobscheduler"
+      summary: "Submit an on-demand scoring job"
+      description: ""
+      operationId: "create_on_demand_job"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring defintion name"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+    delete:
+      tags:
+      - "jobscheduler"
+      summary: "Deletes the specific scoring job from job scheduler"
+      description: ""
+      operationId: "delete_scheduler_job"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "Scoring job deleted"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Scoring job not found"
+      x-swagger-router-controller: "swagger_server.controllers.jobscheduler_controller"
+  /joblog:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "joblog"
+      summary: "Get all existing scoring job log of the specific tenant"
+      description: ""
+      operationId: "get_jobs_log"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "skip"
+        in: "query"
+        description: "Skip n records while query"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Limit n records while return"
+        required: false
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.joblog_controller"
+  /joblog/{name}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "joblog"
+      summary: "Get the scoring job log of the specific job ID"
+      description: ""
+      operationId: "get_job_log"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        description: "Scoring job name(aka job ID)"
+        required: true
+        type: "string"
+      - name: "skip"
+        in: "query"
+        description: "Skip n records while query"
+        required: false
+        type: "integer"
+      - name: "limit"
+        in: "query"
+        description: "Limit n records while return"
+        required: false
+        type: "integer"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Scoring job not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.joblog_controller"
+  /joblog/exec/{exec_id}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "joblog"
+      summary: "Get the scoring job log by execution ID"
+      description: ""
+      operationId: "get_job_exec_log"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "exec_id"
+        in: "path"
+        description: "Scoring job execution ID"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Job log not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.joblog_controller"
+  /scoringresult/{result_id}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoring"
+      summary: "Get the scoring result of the specific job execution"
+      description: ""
+      operationId: "get_scoring_result"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "result_id"
+        in: "path"
+        description: "Scoring result ID"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Result ID not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoring_controller"
+  /scoringdata/{data_id}:
+    parameters: *SECURITY_PARAMS
+    get:
+      tags:
+      - "scoring"
+      summary: "Get the scoring data of the specific job execution"
+      description: ""
+      operationId: "get_scoring_data"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "data_id"
+        in: "path"
+        description: "Scoring data ID"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid parameters"
+        404:
+          description: "Data ID not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.scoring_controller"
+  /healthcheck:
+    get:
+      tags:
+      - "healthcheck"
+      summary: "healthcheck"
+      operationId: "healthcheck"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Invalid status value"
+      x-swagger-router-controller: "swagger_server.controllers.healthcheck_controller"
+definitions:
+  wml_config:
+    type: "object"
+    properties:
+      apikey:
+        type: "string"
+      instance_id:
+        type: "string"
+      username:
+        type: "string"
+      password:
+        type: "string"
+      url:
+        type: "string"
+        example: "https://us-south.ml.cloud.ibm.com"
+    example:
+      password: "password"
+      instance_id: "instance_id"
+      apikey: "apikey"
+      url: "https://us-south.ml.cloud.ibm.com"
+      username: "username"
+  cos_config:
+    type: "object"
+    properties:
+      apikey:
+        type: "string"
+      ibm_auth_endpoint:
+        type: "string"
+      endpoint_url:
+        type: "string"
+    example:
+      apikey: "apikey"
+      endpoint_url: "endpoint_url"
+      ibm_auth_endpoint: "ibm_auth_endpoint"
+  po_config:
+    type: "object"
+    properties:
+      userId:
+        type: "string"
+      apiKey:
+        type: "string"
+      tenantId:
+        type: "string"
+      url:
+        type: "string"
+    example:
+      apiKey: "apiKey"
+      tenantId: "tenantId"
+      userId: "userId"
+      url: "url"
+  scoring_config:
+    type: "object"
+    properties:
+      bucket:
+        type: "string"
+      object:
+        type: "string"
+      delete:
+        type: "boolean"
+      feature_endpoint:
+        type: "string"
+        description: "feature engineering scoring endpoint url"
+      scoring_endpoint:
+        type: "string"
+        description: "pipeline scoring endpoint url"
+    example:
+      bucket: "bucket"
+      feature_endpoint: "feature_endpoint"
+      scoring_endpoint: "scoring_endpoint"
+      delete: true
+      object: "object"
+  data_config:
+    type: "object"
+  ScoringRule:
+    type: "object"
+    required:
+    - "model"
+    properties:
+      model:
+        type: "string"
+        enum:
+        - "anomalydetection"
+        - "failureprobability"
+        - "timetoevent"
+        - "customize"
+        - "processoptimization"
+      data_config:
+        $ref: "#/definitions/data_config"
+      scoring_config:
+        $ref: "#/definitions/scoring_config"
+      po_config:
+        $ref: "#/definitions/po_config"
+      cos_config:
+        $ref: "#/definitions/cos_config"
+      wml_config:
+        $ref: "#/definitions/wml_config"
+    example:
+      po_config:
+        apiKey: "apiKey"
+        tenantId: "tenantId"
+        userId: "userId"
+        url: "url"
+      cos_config:
+        apikey: "apikey"
+        endpoint_url: "endpoint_url"
+        ibm_auth_endpoint: "ibm_auth_endpoint"
+      scoring_config:
+        bucket: "bucket"
+        feature_endpoint: "feature_endpoint"
+        scoring_endpoint: "scoring_endpoint"
+        delete: true
+        object: "object"
+      model: "anomalydetection"
+      data_config: {}
+      wml_config:
+        password: "password"
+        instance_id: "instance_id"
+        apikey: "apikey"
+        url: "https://us-south.ml.cloud.ibm.com"
+        username: "username"
+ 
+ diag_event:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      tenantid:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      type:
+        type: "string"
+        enum:
+        - "node"
+        - "problem"
+        - "symptom"
+      source:
+        type: "string" 
+    example:
+      id: "id"
+      tenantId: "tenantId"
+      name: "name"
+      description: "description"
+      
+ diag_node:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      tenantid:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      istop:
+        type: "string"
+        enum:
+        - "true"
+        - "false"
+      operator:
+        type: "string"
+        enum:
+        - "|"
+        - "&"
+      operands:
+        type: "array" 
+        items:
+          $ref: '#/definitions/diag_event'
+    example:
+      id: "id"
+      tenantId: "tenantId"
+      name: "name"
+      description: "description" 
+      
+ diag_model:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      tenantid:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      nodes:
+        type: "array" 
+        items:
+          $ref: '#/definitions/diag_node'
+    example:
+      id: "id"
+      tenantId: "tenantId"
+      name: "name"
+      description: "description"         
+  
+  job:
+    type: "object"
+    required:
+    - "trigger"
+    properties:
+      id:
+        type: "string"
+      func:
+        type: "string"
+      args:
+        type: "array"
+        items:
+          type: "string"
+      trigger:
+        type: "string"
+        enum:
+        - "interval"
+        - "date"
+        - "cron"
+      weeks:
+        type: "integer"
+      days:
+        type: "integer"
+      hours:
+        type: "integer"
+      minutes:
+        type: "integer"
+      seconds:
+        type: "integer"
+      run_at:
+        type: "string"
+      replace_existing:
+        type: "boolean"
+    example:
+      trigger: "date"
+      run_date: "2018-12-05T16:25:00+08:00"
+  ScoringJob:
+    type: "object"
+    required:
+    - "job"
+    properties:
+      tenantId:
+        type: "string"
+        example: "T1"
+      type:
+        type: "string"
+        enum:
+        - "schedule"
+        - "ondemand"
+      job:
+        $ref: "#/definitions/job"
+    example:
+      type: "schedule"
+      job:
+        trigger: "interval"
+        days: 0
+        hours: 8
+        minutes: 30
+        seconds: 0
+  Object:
+    type: "object"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
